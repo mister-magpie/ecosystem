@@ -1,0 +1,54 @@
+<html>
+<head>
+    <!-- import pixi.js -->
+    <script src="/js/pixi.min.js"></script>
+    <style>
+    #info{
+        background-color: rgba(0,0,0,0.2);
+        width: 30%;
+        position: fixed;
+        right: 0;
+        margin-right: 0.5em;
+        z-index: 100;
+        padding: 1em;
+        border-radius: 0em;
+        font-size: 15px;
+    }
+    </style>
+    <title>Ecosystem Simulation</title>
+</head>
+<body>
+    <div id="info">
+        <h3>Ecosystem Simualtion</h3>
+        <p>ecosystems are cool!</p>
+        <p>
+            <h5>#TODO:</h5>
+            <ul>
+                <li>sea, mudflats, tree, city</li>
+                <li> birds + fisheries > fishes > invertebrates</li>
+                <li>oil(furzey island) + boats(turist + fish) > water quality</li>
+                <li>seasonal migrations?</li>
+            </ul>
+        </p>
+        <p>
+            <h5>resuources:</h5>
+            <ul>
+                <li>
+                    <a>http://www.pooleharbourstudygroup.org.uk</a>
+                </li>
+                <li>
+                    <a>https://www.birdsofpooleharbour.co.uk/</a>
+                </li>
+                <li>
+                    http://www.individualecology.com/project/poole-harbour/
+                </li>
+            </ul>
+        </p>
+        <button onclick="updateCanvasGrid()">updateGrid</button>
+    </div>
+    <script src="js/simulation.js"></script>
+    <!-- <script src="mapdata.json"></script> -->
+
+</body>
+
+</html>

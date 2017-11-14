@@ -1,0 +1,39 @@
+tile = {
+    "type" : ["water,marsh,grass,urban,sand"]
+    "x": int,
+    "y": int,
+    "draw" : function(),
+    "update" :function()
+}
+
+waterTile & marsh-> water quality/pollution -> +/- populations
+urbanTile -> tourist/industry -> +/- pollution
+sandTile & treeTile???
+
+agent = {
+    type
+    x
+    y
+    draw
+    update
+}
+
+birds -> eats fish AND/OR invertebrates
+fish -> eats invertebrates -> depend on water quality
+invertebrates -> depend on water quality
+fishermen -> hunts fishes & pollutes water -> earns money
+tourist boat -> pollutes water -> brings tourists -> earns money
+oil well/industry -> generates pollution -> earns money
+
+sounds = {
+    population of fishes        |
+    population of birds         | BIODIVERSITY?
+    population of invertebrates |
+
+    revenue or sum of:
+        -industry/oil
+        -fisheries
+        -tourism
+}
+
+Can also sonify single events.
