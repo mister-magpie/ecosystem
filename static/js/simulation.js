@@ -12,7 +12,7 @@ const pixelSize = 5//Math.floor(screen.availHeight/100) - 1
 // renderer.resize(pixelSize*100, pixelSize*100);
 //Add the canvas to the HTML document
 //document.body.appendChild(renderer.view);
-var app = new PIXI.Application(500, 500, {autoStart : false, antialias: false });
+var app = new PIXI.Application(500, 500, {autoStart : true, antialias: false });
 document.body.appendChild(app.view);
 
 //Create a container object called the `stage`
@@ -20,7 +20,6 @@ document.body.appendChild(app.view);
 //Tell the `renderer` to `render` the `stage`
 //renderer.render(stage);
 var canvasGrid = create2DArray(100)
-var simGrid = create2DArray(100)
 
 function create2DArray(dimension){
     var a = new Array(dimension)
@@ -90,13 +89,7 @@ function updateCanvasGrid(){
     //renderer.render(stage)
 }
 
-//tree object constructor
-function tree(){
-    this.type = "tree";
-    this.age = 0;
-    this.color = "0x00" + Math.floor(Math.random()*256).toString(16) + "00";
 
-}
 //tile object constructor
 function tile(color,posX,posY){
     rec = new PIXI.Graphics()
@@ -124,7 +117,8 @@ function Get(yourUrl){
 //var jsonmap = JSON.parse(Get("./mapdata2.json"));
 //console.log("this is the author name: "+json_obj.author_name);
 
-
+var seaTiles   = [];
+var grassTiles = [];
 function colorgrid(){
     for(i=0; i<10000; i++){
         let x = Math.floor(i/100);
@@ -138,6 +132,7 @@ function colorgrid(){
                 color = "0x" + grey + grey + grey
                 break;
             case 'sea':
+                seaTiles.push(i);
                 color = "0x0022"+ Math.floor(155 + Math.random()*100).toString(16);
                 break;
             case 'sand':
@@ -147,6 +142,7 @@ function colorgrid(){
                 color = "0x66" + Math.floor(100 + Math.random()*100).toString(16) +"55"
                 break;
             case 'grass':
+                grassTiles.push(i)
                 color = "0x00" + Math.floor(50 + Math.random()*100).toString(16) + "00"
                 break;
             default:
@@ -158,87 +154,28 @@ function colorgrid(){
     }
     //renderer.render(stage)
 }
-function cubeSprite(){
-  let rec = new PIXI.Graphics()
-  rec.beginFill("0xffffff");
-  rec.lineStyle(1,"0x000000",1);
-  rec.drawRect(0,0,pixelSize,pixelSize);
-  rec.endFill();
-  rec.boundsPadding = 0;
-  let texture = rec.generateTexture();
-  var sprite = new PIXI.Sprite(texture);
-  app.stage.addChild(sprite);
-  return sprite
-}
-/*
-birds are white and fly around the map
-*/
-var bird = function(posX,posY){
-  this.type = "bird";
-  this.x = posX | Math.round(Math.random()*99);
-  this.y = posY | Math.round(Math.random()*99);
-  this.color = "0xffffff";
-  this.sprite = cubeSprite();
-//  this.sprite.z
-  app.stage.addChild(this.sprite);
-
-  this.move = function(){
-    this.x += Math.round(Math.random()*2 - 1);
-    this.y += Math.round(Math.random()*2 - 1);
-    if (this.x < 0) this.x += 100;
-    if (this.y < 0) this.y += 100;
-    if (this.x > 99) this.x -= 100;
-    if (this.y > 99) this.y -= 100;
-    this.sprite.x = this.x*pixelSize;
-    this.sprite.y = this.y*pixelSize;
-  }
-}
-
-/*
-Fishes are dark blue and wonder in the sea
-*/
-var fish = function(posX,posY){
-  this.type = "bird";
-  this.x = posX | Math.round(Math.random()*99);
-  this.y = posY | Math.round(Math.random()*99);
-  this.color = "0xffffff";
-  this.sprite = cubeSprite();
-//  this.sprite.z
-  app.stage.addChild(this.sprite);
-
-  this.move = function(){
-    this.x += Math.round(Math.random()*2 - 1);
-    this.y += Math.round(Math.random()*2 - 1);
-    if (this.x < 0) this.x += 100;
-    if (this.y < 0) this.y += 100;
-    if (this.x > 99) this.x -= 100;
-    if (this.y > 99) this.y -= 100;
-    this.sprite.x = this.x*pixelSize;
-    this.sprite.y = this.y*pixelSize;
-  }
-}
-var creatures = [];
-
-function createBirds(m){
-  n = m | 20
-  for(i=0;i<n;i++){
-    creatures.push(new bird());
-  }
-}
 
 var stepCounter = 0;
-function step(){
+function nextStep(){
   // update step counter
   stepCounter += 1;
   let c = document.getElementById("step")
   c.style.fontWeight = 700
   c.innerText = stepCounter;
   // move things
-  creatures.forEach(function(el){
-    el.move()
+  hashMap.forEach(function(value,key){
+    value.step()
   });
 }
 
-function startSim(){
-  app.ticker.add(step)
+
+var inter;
+function start(){
+    inter = setInterval(function () {
+        nextStep()
+    }, 500);
+}
+
+function stop(){
+    clearInterval(inter);
 }

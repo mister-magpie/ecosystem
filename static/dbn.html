@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Sonification of DBN</title>
+        <script src="js/dbn.js"></script>
+        <script src="js/Tone.min.js"></script>
+        <style>
+            #graph{
+                color: #aaa;
+                font-family: lucida console, monaco, monospace;
+                font-size: 12px;
+                display: none;
+
+            }
+            table {
+                border: 2px solid #222;
+            }
+            table *{
+                border: 1px solid #444;
+                background-color: #333;
+                margin: 0.5em;
+                padding: 0.4em;
+            }
+            #title{
+                font-family: lucida console, monaco, monospace;
+                font-weight: bold;
+                color: #666;
+            }
+            body{
+                background-color: #f2f2f2;
+                text-align: center;
+            }
+
+            button{
+                background-color: #f2f2f2;
+                padding: 1em;
+                border: 1px solid #999;
+                width: 20%;
+                margin: 4%;
+                color: #666;
+                font: 80% lucida console, monaco, monospace;
+                font-weight: bold;
+            }
+            button:hover{
+                background-color: #222;
+                color: #f2f2f2;
+                border: 1px solid #666;
+
+            }
+
+            .slider {
+            -webkit-appearance: none;
+            width: 80%;
+            margin: auto 10%;
+            height: 1px;
+            background: #333;
+            outline: none;
+            opacity: 0.5;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+            }
+
+            .slider:hover {
+            opacity: 1;
+            }
+
+            .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            background: #222;
+            cursor: pointer;
+            }
+
+            .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #aaa;
+            cursor: pointer;
+            }
+            #slider-container{
+                color: #666;
+                font-family: lucida console, monaco, monospace;
+                font-weight: bold;
+                margin-top: 0%;
+            }
+            #slider-container>span{
+                font-size: 80%;
+                float: left;
+                margin: auto 10%;
+            }
+        </style>
+    </head>
+    <body>
+        <h3 id="title">
+            sonification of a Deep Belief Model of Poole Harbour Ecosystem
+        </h3>
+        <div id="graph"></div>
+        <button type="button" id="run-btn" onclick="run(-1)">run</button>
+        <button type="button" id="stop-btn" onclick="stop()">stop</button>
+        <button type="button" id="reset-btn" onclick="reset()">reset</button>
+        <div id="slider-container">
+
+        </div>
+    </body>
+    <script>
+        window.onload = drawTable();
+        window.onload = drawSliders();
+    </script>
+</html>

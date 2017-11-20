@@ -9,14 +9,14 @@ app.get('/', function (req, res) {
   res.sendFile('static/index.html');
 });
 
-app.get('/boids', function (req, res) {
-  res.sendfile('static/boids.html');
-});
-
 app.get('/pixi', function (req, res) {
   res.sendfile('static/pixi.html');
-  console.log(obj.mapdata[1])
 });
+
+app.get('/dbn', function (req, res) {
+  res.sendfile('static/dbn.html');
+});
+
 
 app.listen(8080, function () {
   console.log('Example app listening on port 8080!');
