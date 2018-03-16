@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Sonification</title>
+    <script src="Tone.min.js" type="text/javascript"></script>
+    <script src="MidiConvert.js" type="text/javascript"></script>
+    <!-- jquery for convenience -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <!-- my code -->
+    <!--<script src="js/timeseries.js"></script>-->
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+    <button onclick="Tone.Transport.start()">start</button>
+    <button onclick="Tone.Transport.stop()">stop</button>
+    <script>
+
+    $.getJSON("./data.json",function(data){
+      timedata = data.slice()
+      for (var i = 0; i < timedata.length; i++) {
+        timedata[i].timeseries = normalize(timedata[i].timeseries);
+      }
+      console.log("data loaded");
+    });
+
+    function normalize(arr){
+      var max = Math.max(...arr.slice(92));
+      var min = Math.min(...arr.slice(92));
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = arr[i] / max
+      }
+      return arr
+    }
+
+
+      var synth = new Tone.FMSynth({
+        "modulationIndex": 5,
+        "harmonicity": 10,
+        "detune":10,
+        "envelope":{
+          "attack":0.001,
+          "sustain":0.1,
+          "decay":0.1,
+          "release":0
+        },
+        "oscillator":{"type":"sine"},
+        "modulation":{"type":"sine"},
+      }).toMaster()
+
+      var param = {
+        "harmonicity":2,
+        "volume":-24
+      };
+      var synth1 = new Tone.DuoSynth(param).toMaster();
+      var crusher1 = new Tone.BitCrusher(4).toMaster();
+      synth1.connect(crusher1, voiceVerb);
+
+      var synth2 = new Tone.DuoSynth(param).toMaster();
+      var crusher2 = new Tone.BitCrusher(4).toMaster();
+      synth2.connect(crusher2,voiceVerb);
+
+      var synth3 = new Tone.DuoSynth(param);
+      var crusher3 = new Tone.BitCrusher(2).toMaster();
+      var chorus3 = new Tone.Chorus(4, 2.5, 0.5).toMaster();
+      synth3.connect(chorus3, voiceVerb, crusher3);
+
+      var synth4 = new Tone.DuoSynth(param);
+      var crusher4 = new Tone.BitCrusher(2).toMaster();
+      var chorus4 = new Tone.Chorus(4, 2.5, 0.5);
+      synth4.connect(chorus4,voiceVerb, crusher4);
+
+
+      var drone = new Tone.FMOscillator({"frequency":"C2","volume":-12}).toMaster();
+      Tone.Transport.schedule(function(time){
+        //drone.start()
+      },"0:0:0")
+
+      var drum = new Tone.MembraneSynth({"volume":-12}).toMaster();
+
+
+
+      var voiceVerb = new Tone.Freeverb(0.8,2000).toMaster();
+
+      var masterVerb = new Tone.Freeverb(0.5,3000);
+      Tone.Master.chain(masterVerb);
+
+
+      var timestep = 0;
+
+      drum.oscillator.type = "sine";
+      drum.volume.value = -12
+      Tone.Transport.scheduleRepeat(function(time){
+        drum.triggerAttackRelease("C1", "4n",Tone.now,0.1);
+      },"4n");
+
+      Tone.Transport.scheduleRepeat(function(time){
+    
+        // nitrates
+        chorus4.frequency.value = timedata[8].timeseries[timestep + 92] * 50 - 30;
+        crusher4.bits = 8 - 4*timedata[8].timeseries[timestep + 92];
+        // riparian water
+        chorus3.frequency.value = timedata[6].timeseries[timestep + 92] * 50 - 30;
+        crusher3.bits = 8 - 4*timedata[6].timeseries[timestep + 92];
+        //macroalgal mats area
+        crusher2.bits = 8 - 5*timedata[3].timeseries[timestep + 92]
+        //macroalgal mats contidion
+        crusher1.bits = 8 - 5*timedata[3].timeseries[timestep + 92]
+
+        console.log(timestep + 1980);
+
+        timestep += 1;
+      },"1m")
+
+      Tone.Transport.schedule(function(time){
+        Tone.Transport.stop()
+        drone.stop();
+        timestep = 0;
+      },"34:0:0")
+
+
+      function loadMIDI(){
+        MidiConvert.load("brownsea_choir.mid", function(midi) {
+          // make sure you set the tempo before you schedule the events
+          Tone.Transport.bpm.value = midi.header.bpm;
+
+          // pass in the note events from one of the tracks as the second argument to Tone.Part
+          var midiPart1 = new Tone.Part(function(time, note) {
+            //use the events to play the synth
+            synth1.triggerAttackRelease(Tone.Frequency(note.name), note.duration, time, note.velocity)
+          }, midi.tracks[0].notes).start()
+
+          var midiPart2 = new Tone.Part(function(time, note) {
+            //use the events to play the synth
+            synth2.triggerAttackRelease(Tone.Frequency(note.name), note.duration, time, note.velocity)
+          }, midi.tracks[1].notes).start()
+
+          var midiPart3 = new Tone.Part(function(time, note) {
+            //use the events to play the synth
+            synth3.triggerAttackRelease(Tone.Frequency(note.name), note.duration, time, note.velocity)
+          }, midi.tracks[2].notes).start()
+
+          var midiPart4 = new Tone.Part(function(time, note) {
+            //use the events to play the synth
+            synth4.triggerAttackRelease(Tone.Frequency(note.name), note.duration, time, note.velocity)
+          }, midi.tracks[3].notes).start()
+
+          // start the transport to hear the events
+          Tone.Transport.bpm.value = 60;
+        })
+      }
+      loadMIDI();
+    </script>
+  </body>
+</html>

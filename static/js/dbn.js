@@ -85,7 +85,7 @@ var timer;
 function run(numberOfIterations){
     var iteration = 0;
     noise = new Tone.Noise("pink").toMaster();
-    var drum = new Tone.MembraneSynth().toMaster();
+    var drum = new Tone.MetalSynth().toMaster();
     drum.volume.value = -12;
     oscillators = initOsc(12);
     noise.volume.value = -50;
@@ -102,10 +102,10 @@ function run(numberOfIterations){
             clearInterval(timer);
         }
         console.log("iteration #"+iteration);
-        drum.triggerAttackRelease(60);
+        drum.triggerAttackRelease("200");
         updateModel();
         updateOsc(oscillators)
-    }, 500);
+    }, 1000);
     // should iterate until nothing changes but we will run it indefinitely
     // for(var i = 0; i<numberOfIterations; i++){
     //     console.log("iteration #" + i);
@@ -207,7 +207,7 @@ function updateModel(){
         updatePosteriors(species.indexOf(el), post);
         posteriorOfIncreasing.set(el,post)
     }
-    console.log(posteriorOfIncreasing.values());
+    //console.log(posteriorOfIncreasing.values());
 }
 
 
